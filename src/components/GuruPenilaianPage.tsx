@@ -22,9 +22,6 @@ interface GuruPenilaianPageProps {
 const GuruPenilaianPage: React.FC<GuruPenilaianPageProps> = ({
   students,
   hasCategories,
-  jadwalAktif,
-  loadingJadwalAktif,
-  onOpenQrModal,
   loading
 }) => {
   const navigate = useNavigate();

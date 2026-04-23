@@ -57,7 +57,7 @@ const ScanAbsensiPage: React.FC = () => {
             scanner.pause(true); // pause scanning while submitting
           }
         },
-        (error) => {
+        () => {
           // frequent errors due to no QR code in frame. ignore.
         }
       );
@@ -96,7 +96,7 @@ const ScanAbsensiPage: React.FC = () => {
             if (qrReaderBtn) qrReaderBtn.click();
           }
         },
-        (err) => {
+        () => {
           alert('Gagal mendapatkan lokasi. Pastikan GPS/Location browser aktif.');
           setSubmitting(false);
           submittingRef.current = false;

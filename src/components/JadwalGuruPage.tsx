@@ -9,7 +9,6 @@ interface JadwalGuruPageProps {
 const JadwalGuruPage: React.FC<JadwalGuruPageProps> = ({
   loadingJadwal,
   jadwalList,
-  onOpenQrModal,
 }) => {
   if (loadingJadwal) {
     return (

@@ -35,14 +35,7 @@ const ManageMarketplacePage: React.FC = () => {
     fetchItems();
   }, [showActiveOnly]);
 
-  const handleToggle = async (id: string, current: boolean) => {
-    try {
-      await api.patch(`/marketplace/admin/items/${id}`, { is_aktif: !current });
-      fetchItems();
-    } catch (err) {
-      alert('Gagal mengubah status');
-    }
-  };
+
 
   const handleDelete = async (id: string) => {
     if (!window.confirm('Apakah Anda yakin ingin menonaktifkan/mengaktifkan status item ini?')) return;

@@ -22,7 +22,7 @@ const HariLiburPage: React.FC = () => {
   const [mingguanList, setMingguanList] = useState<HariMingguan[]>([]);
   const [loading, setLoading] = useState(true);
   const [syncLoading, setSyncLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [, setError] = useState<string | null>(null);
 
   const fetchLibur = async () => {
     try {

@@ -148,7 +148,7 @@ const SlaIndicator: React.FC<{ ticket: TicketDetail }> = ({ ticket }) => {
 };
 
 // ─── Chat Thread ──────────────────────────────────────────────
-const ChatThread: React.FC<{ responses: Response[]; adminIds: string[] }> = ({ responses, adminIds }) => {
+const ChatThread: React.FC<{ responses: Response[] }> = ({ responses }) => {
   if (responses.length === 0)
     return <div className="chat-empty">Belum ada balasan. Mulai percakapan sekarang.</div>;
 
@@ -444,10 +444,8 @@ const HelpdeskPage: React.FC = () => {
                       <p style={{ margin: 0, lineHeight: 1.6 }}>{selectedTicket.description}</p>
                     </div>
 
-                    {/* Chat thread */}
                     <ChatThread
                       responses={selectedTicket.responses}
-                      adminIds={[adminId]}
                     />
 
                     {/* Reply form (if not closed) */}

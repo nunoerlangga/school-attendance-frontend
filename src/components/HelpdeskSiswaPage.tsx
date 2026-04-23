@@ -167,7 +167,6 @@ const HelpdeskSiswaPage: React.FC = () => {
   const [submitting, setSubmitting] = useState(false);
   const [similarTickets, setSimilarTickets] = useState<any[]>([]);
   const [checkingDup, setCheckingDup] = useState(false);
-  const [acknowledgedDup, setAcknowledgedDup] = useState(false);
 
   // Reply
   const [replyMsg, setReplyMsg] = useState('');
@@ -190,11 +189,9 @@ const HelpdeskSiswaPage: React.FC = () => {
 
   useEffect(() => { fetchTickets(); }, [fetchTickets]);
 
-  // Debounced duplicate check
   useEffect(() => {
     if (!form.subject || form.subject.length < 5) { 
       setSimilarTickets([]); 
-      setAcknowledgedDup(false);
       return; 
     }
     const t = setTimeout(async () => {
@@ -204,7 +201,6 @@ const HelpdeskSiswaPage: React.FC = () => {
           params: { subject: form.subject, category: form.category, id_siswa: idSiswa },
         });
         setSimilarTickets(res.data);
-        if (res.data.length === 0) setAcknowledgedDup(false);
       } catch (_) {}
       finally { setCheckingDup(false); }
     }, 600);
@@ -213,7 +209,7 @@ const HelpdeskSiswaPage: React.FC = () => {
 
   const handleSubmitTicket = async () => {
     if (!form.subject.trim() || !form.description.trim()) return;
-    if (similarTickets.length > 0 && !acknowledgedDup) return;
+    if (similarTickets.length > 0) return;
     setSubmitting(true);
     try {
       await api.post('/helpdesk/tickets', {
@@ -222,7 +218,6 @@ const HelpdeskSiswaPage: React.FC = () => {
       });
       setForm({ subject: '', description: '', category: 'QR_SCAN', priority: 'medium' });
       setSimilarTickets([]);
-      setAcknowledgedDup(false);
       await fetchTickets();
       setView('list');
     } catch (e: any) { alert(e.response?.data?.message || 'Gagal mengirim tiket'); }
@@ -506,38 +501,35 @@ const HelpdeskSiswaPage: React.FC = () => {
             {/* Actions */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '2rem', paddingTop: '1.5rem', borderTop: '1px solid var(--border)' }}>
               {similarTickets.length > 0 && (
-                <div style={{ padding: '1rem', background: '#fffbeb', border: '1px solid #fde68a', borderRadius: '0.75rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <div style={{ padding: '1rem', background: '#fff1f2', border: '1px solid #fecdd3', borderRadius: '0.75rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <span style={{ fontSize: '1.25rem' }}>⚠️</span>
-                    <span style={{ fontWeight: 700, color: '#92400e' }}>Tiket Serupa Ditemukan</span>
+                    <span style={{ fontSize: '1.25rem' }}>🛑</span>
+                    <span style={{ fontWeight: 700, color: '#9f1239' }}>Tiket Serupa Sedang Aktif</span>
                   </div>
-                  <p style={{ fontSize: '0.85rem', color: '#b45309', margin: 0 }}>
-                    Sistem mendeteksi Anda memiliki tiket yang sedang aktif dengan masalah serupa (lihat panel kanan). 
-                    Untuk menghindari duplikasi, mohon konfirmasi jika ini adalah masalah yang berbeda.
+                  <p style={{ fontSize: '0.85rem', color: '#be123c', margin: 0 }}>
+                    Anda tidak dapat mengirim tiket baru karena ada tiket dengan topik serupa yang sedang diproses. 
+                    Silakan gunakan tiket yang sudah ada untuk berkomunikasi dengan admin.
                   </p>
-                  <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', marginTop: '0.5rem', padding: '0.5rem', background: 'rgba(253, 230, 138, 0.4)', borderRadius: '0.5rem' }}>
-                    <input 
-                      type="checkbox" 
-                      style={{ width: '1rem', height: '1rem', cursor: 'pointer' }}
-                      checked={acknowledgedDup} 
-                      onChange={(e) => setAcknowledgedDup(e.target.checked)} 
-                    />
-                    <span style={{ fontSize: '0.9rem', fontWeight: 600, color: '#92400e' }}>Ya, masalah ini berbeda. Lanjutkan membuat tiket.</span>
-                  </label>
+                  <div style={{ marginTop: '0.5rem', padding: '0.75rem', background: 'rgba(255,255,255,0.6)', borderRadius: '0.5rem', borderLeft: '3px solid #e11d48' }}>
+                    <div style={{ fontSize: '0.75rem', color: '#9f1239', fontWeight: 600, textTransform: 'uppercase' }}>Tiket Aktif:</div>
+                    <div style={{ fontSize: '0.9rem', fontWeight: 700, color: '#111827' }}>{similarTickets[0].subject}</div>
+                    <div style={{ fontSize: '0.8rem', color: '#6b7280' }}>ID: #{ticketShortId(similarTickets[0].id_ticket)} • Status: {STATUS_CFG[similarTickets[0].status].label}</div>
+                  </div>
                 </div>
               )}
 
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem' }}>
                 <button
                   className="hsk-btn-cancel"
-                  onClick={() => { setView('list'); setSimilarTickets([]); setAcknowledgedDup(false); }}
+                  onClick={() => { setView('list'); setSimilarTickets([]); }}
                 >
                   Batal
                 </button>
                 <button
                   className="hsk-btn-primary"
-                  disabled={submitting || !form.subject.trim() || !form.description.trim() || (similarTickets.length > 0 && !acknowledgedDup)}
+                  disabled={submitting || !form.subject.trim() || !form.description.trim() || similarTickets.length > 0}
                   onClick={handleSubmitTicket}
+                  style={similarTickets.length > 0 ? { background: '#9ca3af', cursor: 'not-allowed' } : {}}
                 >
                   {submitting ? 'Mengirim...' : '📤 Kirim Tiket'}
                 </button>

@@ -187,6 +187,7 @@ const HelpdeskPage: React.FC = () => {
   const [replyMsg, setReplyMsg] = useState('');
   const [replying, setReplying] = useState(false);
   const [updatingStatus, setUpdatingStatus] = useState(false);
+  const [exporting, setExporting] = useState(false);
 
   const adminId = getIdUser();
 
@@ -268,6 +269,25 @@ const HelpdeskPage: React.FC = () => {
     }
   };
 
+  const handleExportExcel = async () => {
+    setExporting(true);
+    try {
+      const res = await api.get('/helpdesk/export-excel', { responseType: 'blob' });
+      const url = window.URL.createObjectURL(new Blob([res.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `Rekap_Tiket_Helpdesk_${new Date().toISOString().split('T')[0]}.xlsx`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (e) {
+      console.error(e);
+      alert('Gagal mengekspor data Excel.');
+    } finally {
+      setExporting(false);
+    }
+  };
+
   const suggestions = selectedTicket ? AUTO_SUGGESTIONS[selectedTicket.category] ?? [] : [];
 
   return (
@@ -324,6 +344,14 @@ const HelpdeskPage: React.FC = () => {
             </select>
             <button className="login-button" style={{ width: 'auto', marginTop: 0, padding: '0.6rem 1rem' }} onClick={fetchTickets}>
               🔄 Refresh
+            </button>
+            <button 
+              className="login-button" 
+              style={{ width: 'auto', marginTop: 0, padding: '0.6rem 1rem', background: '#10b981' }} 
+              onClick={handleExportExcel}
+              disabled={exporting}
+            >
+              {exporting ? '⏳...' : '📗 Rekap Excel'}
             </button>
           </div>
 

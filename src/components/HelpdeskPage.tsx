@@ -272,7 +272,7 @@ const HelpdeskPage: React.FC = () => {
   const handleExportExcel = async () => {
     setExporting(true);
     try {
-      const res = await api.get('/helpdesk/export-excel', { responseType: 'blob' });
+      const res = await api.get('/helpdesk/tickets/export-excel', { responseType: 'blob' });
       const url = window.URL.createObjectURL(new Blob([res.data]));
       const link = document.createElement('a');
       link.href = url;

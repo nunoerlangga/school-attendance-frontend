@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'http://localhost:3000',
+  baseURL: 'https://wanita-nonremovable-japingly.ngrok-free.dev',
   headers: {
     'Content-Type': 'application/json',
   },

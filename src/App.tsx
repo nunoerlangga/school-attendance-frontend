@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './components/Login';
 import AdminDashboard from './components/AdminDashboard';
 import GuruDashboard from './components/GuruDashboard';
@@ -74,6 +74,7 @@ const App: React.FC = () => {
         <Route path="/" element={<Navigate to="/login" replace />} />
       </Routes>
     </Router>
+
   );
 };
 
